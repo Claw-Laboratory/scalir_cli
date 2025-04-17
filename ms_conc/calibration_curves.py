@@ -353,7 +353,7 @@ def setting_from_stdinfo(std_info, results_):
         for cp in np.unique(output.peak_label):
             try:
 #                 print(file)
-                output.STD_CONC[(output.ms_file == file) & (output.peak_label == cp)] = \
+                output.loc[(output.ms_file == file) & (output.peak_label == cp), 'STD_CONC'] = \
                 std_info[file][std_info.peak_label == cp].iloc[0]
 #                 print(cp)
             except:
@@ -365,7 +365,7 @@ def setting_from_stdinfo(std_info, results_):
 
 def training_from_standard_results(std_results, by='peak_max'):
     x_train = std_results[['peak_label', by ]]
-    x_train.rename(columns= {by:'value'}, inplace = True)
+    x_train = x_train.rename(columns={by: 'value'})
     y_train = np.array(std_results.STD_CONC)
     
     return x_train, y_train
@@ -485,8 +485,8 @@ def train_to_validation(X, Y, curves):
     X0['Y_max'] = 0.0
     
     for cp in np.unique(X0.peak_label):
-        X0.Y_min[X0.peak_label == cp] = curves0.Y_min[curves0.peak_label == cp].iloc[0]
-        X0.Y_max[X0.peak_label == cp] = curves0.Y_max[curves0.peak_label == cp].iloc[0]
+        X0.loc[X0.peak_label == cp, 'Y_min'] = curves0.loc[curves0.peak_label == cp, 'Y_min'].iloc[0]
+        X0.loc[X0.peak_label == cp, 'Y_max'] = curves0.loc[curves0.peak_label == cp, 'Y_max'].iloc[0]
         
     X0.loc[X0.true_conc < X0.Y_min, 'true_conc'] = None
     X0.loc[X0.true_conc > X0.Y_max, 'true_conc'] = None
